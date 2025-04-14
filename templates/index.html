@@ -3,31 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Gallery Upload</title>
-</head>
-<body>
-    <h1>Upload Image</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <button type="submit">Upload</button>
-    </form>
-
-    <h2>Uploaded Images</h2>
-    <div style="display:flex; flex-wrap:wrap;">
-        {% for img in images %}
-        <img src="{{ img[0] }}" width="200" style="margin:10px;" />
-    {% endfor %}
-    </div>
     <style>
-        img {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f2f2f2;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 100px; /* enough padding bottom for footer space */
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .gallery img {
             margin: 10px;
             border: 2px solid #ccc;
             border-radius: 5px;
-            object-fit: scale-down;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
         }
-        form {
-            margin-bottom: 20px;
-        }
     </style>
+</head>
+<body>
+
+    <header>
+        <h1>📸 Image Gallery</h1>
+    </header>
+
+    <main>
+        <h2>Upload New Image</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <h2>Uploaded Images</h2>
+        <div class="gallery">
+            {% for img in images %}
+                <img src="{{ img[0] }}" alt="Uploaded Image" />
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 SARS Technologies. All rights reserved.
+    </footer>
+
 </body>
 </html>
