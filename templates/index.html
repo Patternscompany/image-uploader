@@ -14,10 +14,20 @@
     <h2>Uploaded Images</h2>
     <div style="display:flex; flex-wrap:wrap;">
         {% for img in images %}
-            <div style="margin:10px;">
-                <img src="{{ url_for('static', filename='uploads/' + img[0]) }}" width="200">
-            </div>
-        {% endfor %}
+        <img src="{{ url_for('static', filename='uploads/' ~ img[0]) }}" width="200" />
+      {% endfor %}
     </div>
+    <style>
+        img {
+            margin: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            object-fit: scale-down;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
 </body>
 </html>
