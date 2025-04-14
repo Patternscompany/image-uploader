@@ -1,17 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for
 from dotenv import load_dotenv
-load_dotenv()
+
 import os
+import cloudinary
+import cloudinary.uploader
 import mysql.connector
 from datetime import datetime
 
-app = Flask(__name__)
-UPLOAD_FOLDER = 'static/uploads/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+load_dotenv()
 
-# Ensure folder exists
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+app = Flask(__name__)
 
 # MySQL connection settings
 def get_db_connection():
@@ -21,6 +19,13 @@ def get_db_connection():
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME")
     )
+
+# Cloudinary configuration
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 # Initialize DB table
 def init_db():
@@ -43,18 +48,20 @@ def index():
     if request.method == 'POST':
         file = request.files['image']
         if file:
-            filename = file.filename
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
+            # Upload image to Cloudinary
+            upload_result = cloudinary.uploader.upload(file)
+            image_url = upload_result['secure_url']  # Get the image URL
 
+            # Save URL to MySQL database
             conn = get_db_connection()
             c = conn.cursor()
             c.execute("INSERT INTO images (filename, upload_time) VALUES (%s, %s)",
-                      (filename, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+                      (image_url, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
 
+    # Fetch image URLs from DB
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("SELECT filename FROM images ORDER BY id DESC")
